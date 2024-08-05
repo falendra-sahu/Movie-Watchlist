@@ -1,7 +1,7 @@
 <html><head><base href="https://watchlist.example.com/">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>My Movie Watchlist</title>
+<title>Movie Watchlist</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
   @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
@@ -274,11 +274,22 @@
       margin-bottom: 20px;
     }
   }
+
+  @media (hover: none) and (pointer: coarse) {
+    li {
+      touch-action: none;
+    }
+    
+    li.dragging {
+      opacity: 0.5;
+      background-color: #f0f0f0;
+    }
+  }
 </style>
 </head>
 <body>
   <div class="container">
-    <h1>My Movie Watchlist</h1>
+    <h1>Movie Watchlist</h1>
     <div class="add-movie">
       <input type="text" id="new-movie" placeholder="Enter new movie name">
       <button onclick="addMovie()">Add Movie</button>
@@ -305,12 +316,10 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
   <script type="module">
-    // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
     import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-    // Your web app's Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCZ2h_TGgXH5kGriInh7zKS7RJHwuosJ54",
       authDomain: "all-in-one-use.firebaseapp.com",
@@ -321,7 +330,6 @@
       measurementId: "G-RRC6FDK3HG"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const db = getFirestore(app);
@@ -414,7 +422,6 @@
       toWatchList.innerHTML = '';
       watchedList.innerHTML = '';
       
-      // Sort 'to-watch' list to show new movies at the top
       movies['to-watch'].sort((a, b) => b.createdAt - a.createdAt);
       
       movies['to-watch'].forEach(movie => toWatchList.appendChild(createMovieItem(movie, 'to-watch')));
@@ -463,6 +470,8 @@
         new Sortable(list, {
           animation: 150,
           group: 'shared',
+          delay: 300,
+          delayOnTouchOnly: true,
           onStart: function (evt) {
             evt.item.classList.add('dragging');
           },
@@ -483,20 +492,18 @@
       });
     }
 
-    // Initialize
     setupRealtimeListeners();
     initSortable();
 
-    // Add event listener for Enter key
     document.getElementById('new-movie').addEventListener('keypress', function(event) {
       if (event.key === 'Enter') {
         addMovie();
       }
     });
 
-    // Expose functions to global scope
     window.addMovie = addMovie;
     window.confirmRename = confirmRename;
     window.cancelRename = cancelRename;
   </script>
-</body></html>
+</body>
+</html>
